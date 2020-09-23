@@ -4,10 +4,7 @@ import React, { useState, useEffect } from "react";
 
 export const TodoList = () => {
 	const [singleTodo, setSingleTodo] = useState({});
-	const [todos, setTodos] = useState([
-		{ label: " Pending Todo " },
-		{ label: " Pending Todo2" }
-	]);
+	const [todos, setTodos] = useState([{ label: "Eat" }]);
 
 	useEffect(() => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/jgus0001")
@@ -33,7 +30,7 @@ export const TodoList = () => {
 	};
 	const handleClick = e => {
 		setTodos([...todos, singleTodo]);
-		setSingleTodo({});
+		setSingleTodo({ label: "", done: false });
 	};
 	//spreads the todo list and adds the single todo to the array
 
@@ -60,21 +57,20 @@ export const TodoList = () => {
 					<button onClick={handleClick}> Save </button>
 				</label>
 			</form>
-			<div>
-				{todos.map((TodoItem, i) => {
-					return (
-						<div key={i}>
-							{TodoItem.label}
-							<button
-								className="btn-delete"
-								type="button"
-								onClick={() => deleteTask(TodoItem.label)}>
-								X
-							</button>
-						</div>
-					);
-				})}
-			</div>
+
+			{todos.map((TodoItem, i) => {
+				return (
+					<div className="todo-item" key={i}>
+						{TodoItem.label}
+						<button
+							className="btn-delete"
+							type="button"
+							onClick={() => deleteTask(TodoItem.label)}>
+							X
+						</button>
+					</div>
+				);
+			})}
 		</>
 	);
 };
