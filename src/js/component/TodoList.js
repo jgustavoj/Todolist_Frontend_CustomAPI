@@ -7,7 +7,9 @@ export const TodoList = () => {
 	const [todos, setTodos] = useState([{ label: "Eat" }]);
 
 	useEffect(() => {
-		fetch("https://assets.breatheco.de/apis/fake/todos/user/jgus0001")
+		fetch(
+			"https://3000-e602aabd-5ee2-4e3c-83ab-16569a08f1a5.ws-us02.gitpod.io/todos"
+		)
 			.then(function(response) {
 				if (!response.ok) {
 					throw Error(response.statusText);
@@ -29,41 +31,20 @@ export const TodoList = () => {
 		setSingleTodo({ label: e.target.value, done: false });
 	};
 	const handleClick = e => {
-		setTodos([...todos, singleTodo]);
-		setSingleTodo({});
-		//var data = [{ label: singleTodo, done: false }];
-		fetch("https://assets.breatheco.de/apis/fake/todos/user/jgus0001", {
-			method: "PUT",
-			body: JSON.stringify(todos), // data can be `string` or {object}!
-			headers: {
-				"Content-Type": "application/json"
+		fetch(
+			"https://3000-e602aabd-5ee2-4e3c-83ab-16569a08f1a5.ws-us02.gitpod.io/todos",
+			{
+				method: "POST",
+				body: JSON.stringify(singleTodo), // data can be `string` or {object}!
+				headers: {
+					"Content-Type": "application/json"
+				}
 			}
-		})
-			.then(() => {
-				fetch(
-					"https://assets.breatheco.de/apis/fake/todos/user/jgus0001"
-				)
-					.then(function(response) {
-						if (!response.ok) {
-							throw Error(response.statusText);
-						}
-						// Read the response as json.
-						return response.json();
-					})
-					.then(function(responseAsJson) {
-						// Do stuff with the JSON
-						console.log("responseAsJson", responseAsJson);
-						setTodos(...todos, responseAsJson);
-					})
-					.catch(function(error) {
-						console.log(
-							"Looks like there was a problem: \n",
-							error
-						);
-					});
-			})
+		)
 			.then(res => res.json())
+			.then(response => setTodos(response))
 			.catch(error => console.error("Error", error));
+		setSingleTodo({ label: "" });
 	};
 
 	const deleteTask = task => {
