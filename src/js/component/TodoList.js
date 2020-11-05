@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 
 export const TodoList = () => {
 	const [singleTodo, setSingleTodo] = useState({});
-	const [todos, setTodos] = useState([{ label: "Eat" }]);
+	const [todos, setTodos] = useState([{ label: "" }]);
 
 	useEffect(() => {
 		fetch(
@@ -47,15 +47,36 @@ export const TodoList = () => {
 		setSingleTodo({ label: "" });
 	};
 
-	const deleteTask = task => {
-		var newTodos = todos.filter(item => item.label !== task);
-		setTodos(newTodos);
+	const deleteTodo = id => {
+		fetch(
+			"https://3000-e602aabd-5ee2-4e3c-83ab-16569a08f1a5.ws-us02.gitpod.io/todos" +
+				"/" +
+				id,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}
+		)
+			.then(function(response) {
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				return response.json();
+			})
+			.then(function(responseAsJson) {
+				console.log("responseAsJson", responseAsJson);
+				setTodos(responseAsJson);
+			})
+			.catch(function(error) {
+				console.log("Looks like there was a problem: \n", error);
+			});
+
+		//filter cannot be a standalone function, it needs to be a variable example: var newTodos =
+		//after filtering the function we needed to set the new todos to the updated (setTodos) so it can show the new
+		//list of labels without the item we deleted
 	};
-
-	//filter cannot be a standalone function, it needs to be a variable example: var newTodos =
-	//after filtering the function we needed to set the new todos to the updated (setTodos) so it can show the new
-	//list of labels without the item we deleted
-
 	return (
 		<>
 			<form onSubmit={e => e.preventDefault()}>
@@ -78,7 +99,7 @@ export const TodoList = () => {
 						<button
 							className="btn-delete"
 							type="button"
-							onClick={() => deleteTask(TodoItem.label)}>
+							onClick={() => deleteTodo(TodoItem.id)}>
 							X
 						</button>
 					</div>
@@ -98,5 +119,3 @@ export const TodoList = () => {
 // }
 
 // return
-
-// <button onClick = {() = > deletetask(1)}>Delete</button>
